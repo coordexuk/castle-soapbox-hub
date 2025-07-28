@@ -8,9 +8,9 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Checkbox } from '@/components/ui/checkbox';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { useAuth } from '@/hooks/useAuth';
-import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
 import { Loader2, Plus, Trash2, Upload, FileText } from 'lucide-react';
+import { toast } from 'sonner';
 
 interface TeamMember {
   id?: string;
@@ -30,9 +30,12 @@ interface RegistrationData {
   terms_accepted: boolean;
 }
 
-export function TeamRegistrationForm() {
+interface TeamRegistrationFormProps {
+  onSuccess?: () => void;
+}
+
+export function TeamRegistrationForm({ onSuccess }: TeamRegistrationFormProps) {
   const { user, profile } = useAuth();
-  const { toast } = useToast();
   const [loading, setLoading] = useState(false);
   const [uploading, setUploading] = useState(false);
   const [existingRegistration, setExistingRegistration] = useState<any>(null);
@@ -130,22 +133,14 @@ export function TeamRegistrationForm() {
     if (selectedFile) {
       // Check file size (10MB limit)
       if (selectedFile.size > 10 * 1024 * 1024) {
-        toast({
-          title: "File too large",
-          description: "Please select a file smaller than 10MB.",
-          variant: "destructive",
-        });
+        toast.error("File too large. Please select a file smaller than 10MB.");
         return;
       }
       
       // Check file type
       const allowedTypes = ['image/jpeg', 'image/png', 'application/pdf'];
       if (!allowedTypes.includes(selectedFile.type)) {
-        toast({
-          title: "Invalid file type",
-          description: "Please select a JPG, PNG, or PDF file.",
-          variant: "destructive",
-        });
+        toast.error("Invalid file type. Please select a JPG, PNG, or PDF file.");
         return;
       }
       
@@ -174,14 +169,30 @@ export function TeamRegistrationForm() {
       return publicUrl;
     } catch (error) {
       console.error('Error uploading file:', error);
-      toast({
-        title: "Upload failed",
-        description: "Failed to upload file. Please try again.",
-        variant: "destructive",
-      });
+      toast.error("Failed to upload file. Please try again.");
       return null;
     } finally {
       setUploading(false);
+    }
+  };
+
+  const sendNotificationEmail = async (registrationData: any, teamMembers: TeamMember[]) => {
+    try {
+      const { error } = await supabase.functions.invoke('send-registration-email', {
+        body: {
+          registrationData,
+          teamMembers
+        }
+      });
+
+      if (error) {
+        console.error('Error sending notification email:', error);
+        toast.error("Registration saved, but failed to send notification email.");
+      } else {
+        console.log('Notification email sent successfully');
+      }
+    } catch (error) {
+      console.error('Error sending notification email:', error);
     }
   };
 
@@ -196,20 +207,12 @@ export function TeamRegistrationForm() {
     );
     
     if (validMembers.length === 0) {
-      toast({
-        title: "Validation Error",
-        description: "Please add at least one team member.",
-        variant: "destructive",
-      });
+      toast.error("Please add at least one team member.");
       return;
     }
     
     if (!formData.terms_accepted) {
-      toast({
-        title: "Terms Required",
-        description: "Please accept the terms and conditions.",
-        variant: "destructive",
-      });
+      toast.error("Please accept the terms and conditions.");
       return;
     }
     
@@ -277,22 +280,20 @@ export function TeamRegistrationForm() {
       
       if (membersError) throw membersError;
       
-      toast({
-        title: "Success!",
-        description: existingRegistration 
-          ? "Your team registration has been updated successfully."
-          : "Your team has been registered successfully for the Castle Douglas Soapbox Derby 2026!",
-      });
+      // Send notification email
+      await sendNotificationEmail(registrationData, validMembers);
       
-      // Refresh the registration data
-      await fetchExistingRegistration();
+      toast.success(existingRegistration 
+        ? "Your team registration has been updated successfully!"
+        : "Your team has been registered successfully for the Castle Douglas Soapbox Derby 2026!");
+      
+      // Call onSuccess callback to trigger redirect
+      if (onSuccess) {
+        onSuccess();
+      }
       
     } catch (error: any) {
-      toast({
-        title: "Error",
-        description: error.message || "Failed to save registration. Please try again.",
-        variant: "destructive",
-      });
+      toast.error(error.message || "Failed to save registration. Please try again.");
     } finally {
       setLoading(false);
     }
@@ -528,7 +529,7 @@ export function TeamRegistrationForm() {
           <Button
             type="submit"
             disabled={loading || uploading}
-            className="w-full bg-orange-600 hover:bg-orange-700"
+            className="w-full bg-red-600 hover:bg-red-700"
           >
             {loading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
             {existingRegistration ? 'Update Registration' : 'Submit Registration'}

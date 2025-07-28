@@ -5,7 +5,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { FileText, Users, Calendar, Edit, Trophy } from 'lucide-react';
+import { FileText, Users, Calendar, Edit, Trophy, Download } from 'lucide-react';
 import { TeamRegistrationForm } from './TeamRegistrationForm';
 
 export function Dashboard() {
@@ -48,10 +48,15 @@ export function Dashboard() {
     }
   };
 
+  const handleFormSuccess = () => {
+    setShowForm(false);
+    fetchRegistration();
+  };
+
   if (loading) {
     return (
       <div className="flex justify-center items-center h-64">
-        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-orange-600"></div>
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-red-600"></div>
       </div>
     );
   }
@@ -66,7 +71,7 @@ export function Dashboard() {
         >
           ← Back to Dashboard
         </Button>
-        <TeamRegistrationForm />
+        <TeamRegistrationForm onSuccess={handleFormSuccess} />
       </div>
     );
   }
@@ -74,14 +79,14 @@ export function Dashboard() {
   if (!registration) {
     return (
       <div className="text-center py-12">
-        <Trophy className="h-16 w-16 text-orange-600 mx-auto mb-4" />
+        <Trophy className="h-16 w-16 text-red-600 mx-auto mb-4" />
         <h2 className="text-2xl font-bold text-gray-900 mb-2">Welcome to the Derby!</h2>
         <p className="text-gray-600 mb-6">
           You haven't registered your team yet. Click the button below to get started.
         </p>
         <Button
           onClick={() => setShowForm(true)}
-          className="bg-orange-600 hover:bg-orange-700"
+          className="bg-red-600 hover:bg-red-700"
         >
           Register Your Team
         </Button>
@@ -107,7 +112,7 @@ export function Dashboard() {
         <Card>
           <CardHeader>
             <CardTitle className="flex items-center space-x-2">
-              <Trophy className="h-5 w-5 text-orange-600" />
+              <Trophy className="h-5 w-5 text-red-600" />
               <span>Team Status</span>
             </CardTitle>
           </CardHeader>
@@ -145,6 +150,123 @@ export function Dashboard() {
           </CardContent>
         </Card>
       </div>
+
+      {/* Event Documents Section */}
+      <Card>
+        <CardHeader>
+          <CardTitle className="flex items-center space-x-2">
+            <FileText className="h-5 w-5 text-red-600" />
+            <span>Event Documents</span>
+          </CardTitle>
+          <CardDescription>
+            Download important documents for the Castle Douglas Soapbox Derby 2026
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="p-4 bg-gray-50 rounded-lg">
+              <div className="flex items-center justify-between">
+                <div>
+                  <h4 className="font-semibold text-gray-900">Rules & Regulations</h4>
+                  <p className="text-sm text-gray-600">Official competition rules</p>
+                </div>
+                <Button variant="outline" size="sm">
+                  <Download className="h-4 w-4 mr-2" />
+                  Download
+                </Button>
+              </div>
+            </div>
+            
+            <div className="p-4 bg-gray-50 rounded-lg">
+              <div className="flex items-center justify-between">
+                <div>
+                  <h4 className="font-semibold text-gray-900">Event Schedule</h4>
+                  <p className="text-sm text-gray-600">Race day timeline</p>
+                </div>
+                <Button variant="outline" size="sm">
+                  <Download className="h-4 w-4 mr-2" />
+                  Download
+                </Button>
+              </div>
+            </div>
+            
+            <div className="p-4 bg-gray-50 rounded-lg">
+              <div className="flex items-center justify-between">
+                <div>
+                  <h4 className="font-semibold text-gray-900">Safety Guidelines</h4>
+                  <p className="text-sm text-gray-600">Important safety information</p>
+                </div>
+                <Button variant="outline" size="sm">
+                  <Download className="h-4 w-4 mr-2" />
+                  Download
+                </Button>
+              </div>
+            </div>
+            
+            <div className="p-4 bg-gray-50 rounded-lg">
+              <div className="flex items-center justify-between">
+                <div>
+                  <h4 className="font-semibold text-gray-900">Course Map</h4>
+                  <p className="text-sm text-gray-600">Derby course layout</p>
+                </div>
+                <Button variant="outline" size="sm">
+                  <Download className="h-4 w-4 mr-2" />
+                  Download
+                </Button>
+              </div>
+            </div>
+          </div>
+        </CardContent>
+      </Card>
+
+      {/* Announcements Section */}
+      <Card>
+        <CardHeader>
+          <CardTitle className="flex items-center space-x-2">
+            <Calendar className="h-5 w-5 text-blue-600" />
+            <span>Latest Announcements</span>
+          </CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className="space-y-4">
+            <div className="p-4 bg-blue-50 border-l-4 border-blue-600 rounded-r-lg">
+              <div className="flex justify-between items-start">
+                <div>
+                  <h4 className="font-semibold text-blue-900">Weather Update</h4>
+                  <p className="text-sm text-blue-700 mt-1">
+                    Current forecast shows clear skies for race day. All systems go!
+                  </p>
+                </div>
+                <span className="text-xs text-blue-600">2 days ago</span>
+              </div>
+            </div>
+            
+            <div className="p-4 bg-green-50 border-l-4 border-green-600 rounded-r-lg">
+              <div className="flex justify-between items-start">
+                <div>
+                  <h4 className="font-semibold text-green-900">Registration Deadline Reminder</h4>
+                  <p className="text-sm text-green-700 mt-1">
+                    Don't forget - final registration deadline is approaching fast!
+                  </p>
+                </div>
+                <span className="text-xs text-green-600">1 week ago</span>
+              </div>
+            </div>
+            
+            <div className="p-4 bg-red-50 border-l-4 border-red-600 rounded-r-lg">
+              <div className="flex justify-between items-start">
+                <div>
+                  <h4 className="font-semibold text-red-900">Safety Inspection Required</h4>
+                  <p className="text-sm text-red-700 mt-1">
+                    All soapboxes must pass safety inspection before race day. Schedule yours now!
+                  </p>
+                </div>
+                <span className="text-xs text-red-600">1 week ago</span>
+              </div>
+            </div>
+          </div>
+        </CardContent>
+      </Card>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         <Card>
@@ -202,7 +324,7 @@ export function Dashboard() {
                   href={registration.file_url}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="flex items-center space-x-2 text-orange-600 hover:text-orange-700"
+                  className="flex items-center space-x-2 text-red-600 hover:text-red-700"
                 >
                   <FileText className="h-4 w-4" />
                   <span>View File</span>
