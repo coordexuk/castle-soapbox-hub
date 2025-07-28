@@ -14,16 +14,137 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      profiles: {
+        Row: {
+          created_at: string | null
+          email: string
+          full_name: string | null
+          id: string
+          role: Database["public"]["Enums"]["user_role"]
+          updated_at: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          email: string
+          full_name?: string | null
+          id: string
+          role?: Database["public"]["Enums"]["user_role"]
+          updated_at?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          email?: string
+          full_name?: string | null
+          id?: string
+          role?: Database["public"]["Enums"]["user_role"]
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
+      team_members: {
+        Row: {
+          created_at: string | null
+          id: string
+          member_age: number
+          member_name: string
+          registration_id: string
+        }
+        Insert: {
+          created_at?: string | null
+          id?: string
+          member_age: number
+          member_name: string
+          registration_id: string
+        }
+        Update: {
+          created_at?: string | null
+          id?: string
+          member_age?: number
+          member_name?: string
+          registration_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "team_members_registration_id_fkey"
+            columns: ["registration_id"]
+            isOneToOne: false
+            referencedRelation: "team_registrations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      team_registrations: {
+        Row: {
+          age_range: string | null
+          brakes_steering: string
+          captain_name: string
+          created_at: string | null
+          design_description: string
+          dimensions: string
+          email: string
+          file_url: string | null
+          id: string
+          participants_count: number
+          phone_number: string
+          soapbox_name: string
+          status: string | null
+          team_name: string
+          terms_accepted: boolean
+          updated_at: string | null
+          user_id: string
+        }
+        Insert: {
+          age_range?: string | null
+          brakes_steering: string
+          captain_name: string
+          created_at?: string | null
+          design_description: string
+          dimensions: string
+          email: string
+          file_url?: string | null
+          id?: string
+          participants_count?: number
+          phone_number: string
+          soapbox_name: string
+          status?: string | null
+          team_name: string
+          terms_accepted?: boolean
+          updated_at?: string | null
+          user_id: string
+        }
+        Update: {
+          age_range?: string | null
+          brakes_steering?: string
+          captain_name?: string
+          created_at?: string | null
+          design_description?: string
+          dimensions?: string
+          email?: string
+          file_url?: string | null
+          id?: string
+          participants_count?: number
+          phone_number?: string
+          soapbox_name?: string
+          status?: string | null
+          team_name?: string
+          terms_accepted?: boolean
+          updated_at?: string | null
+          user_id?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      get_user_role: {
+        Args: { user_id: string }
+        Returns: Database["public"]["Enums"]["user_role"]
+      }
     }
     Enums: {
-      [_ in never]: never
+      user_role: "user" | "admin"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -150,6 +271,8 @@ export type CompositeTypes<
 
 export const Constants = {
   public: {
-    Enums: {},
+    Enums: {
+      user_role: ["user", "admin"],
+    },
   },
 } as const
