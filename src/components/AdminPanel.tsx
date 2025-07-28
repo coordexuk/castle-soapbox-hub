@@ -124,8 +124,8 @@ export function AdminPanel() {
   if (profile?.role !== 'admin') {
     return (
       <div className="text-center py-12">
-        <h2 className="text-2xl font-bold text-gray-900 mb-2">Access Denied</h2>
-        <p className="text-gray-600">You don't have permission to access the admin panel.</p>
+        <h2 className="text-2xl font-bold text-castle-red mb-2">Access Denied</h2>
+        <p className="text-castle-gray">You don't have permission to access the admin panel.</p>
       </div>
     );
   }
@@ -133,7 +133,7 @@ export function AdminPanel() {
   if (loading) {
     return (
       <div className="flex justify-center items-center h-64">
-        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-orange-600"></div>
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-castle-red"></div>
       </div>
     );
   }
@@ -141,10 +141,10 @@ export function AdminPanel() {
   return (
     <div className="space-y-6">
       <div className="flex justify-between items-center">
-        <h1 className="text-3xl font-bold text-gray-900">Admin Panel</h1>
+        <h1 className="text-3xl font-bold text-castle-red">Admin Panel</h1>
         <Button
           onClick={exportData}
-          className="flex items-center space-x-2 bg-orange-600 hover:bg-orange-700"
+          className="flex items-center space-x-2 bg-castle-red hover:bg-red-700 text-white"
         >
           <Download className="h-4 w-4" />
           <span>Export CSV</span>
@@ -155,19 +155,19 @@ export function AdminPanel() {
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
         <Card>
           <CardHeader className="pb-2">
-            <CardTitle className="text-sm font-medium">Total Registrations</CardTitle>
+            <CardTitle className="text-sm font-medium text-castle-gray">Total Registrations</CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">{registrations.length}</div>
+            <div className="text-2xl font-bold text-castle-red">{registrations.length}</div>
           </CardContent>
         </Card>
         
         <Card>
           <CardHeader className="pb-2">
-            <CardTitle className="text-sm font-medium">Pending</CardTitle>
+            <CardTitle className="text-sm font-medium text-castle-gray">Pending</CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-yellow-600">
+            <div className="text-2xl font-bold text-yellow-500">
               {registrations.filter(r => r.status === 'pending').length}
             </div>
           </CardContent>
@@ -175,10 +175,10 @@ export function AdminPanel() {
         
         <Card>
           <CardHeader className="pb-2">
-            <CardTitle className="text-sm font-medium">Approved</CardTitle>
+            <CardTitle className="text-sm font-medium text-castle-gray">Approved</CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-green-600">
+            <div className="text-2xl font-bold text-castle-green">
               {registrations.filter(r => r.status === 'approved').length}
             </div>
           </CardContent>
@@ -186,10 +186,10 @@ export function AdminPanel() {
         
         <Card>
           <CardHeader className="pb-2">
-            <CardTitle className="text-sm font-medium">Total Participants</CardTitle>
+            <CardTitle className="text-sm font-medium text-castle-gray">Total Participants</CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">
+            <div className="text-2xl font-bold text-castle-blue">
               {registrations.reduce((sum, r) => sum + r.participants_count, 0)}
             </div>
           </CardContent>
@@ -199,7 +199,7 @@ export function AdminPanel() {
       {/* Filters */}
       <Card>
         <CardHeader>
-          <CardTitle>Filter & Search</CardTitle>
+          <CardTitle className="text-castle-red">Filter & Search</CardTitle>
         </CardHeader>
         <CardContent>
           <div className="flex flex-col md:flex-row gap-4">
@@ -242,7 +242,7 @@ export function AdminPanel() {
       {/* Registrations Table */}
       <Card>
         <CardHeader>
-          <CardTitle>Team Registrations</CardTitle>
+          <CardTitle className="text-castle-red">Team Registrations</CardTitle>
           <CardDescription>
             {filteredRegistrations.length} of {registrations.length} registrations
           </CardDescription>
@@ -253,11 +253,11 @@ export function AdminPanel() {
               <div key={registration.id} className="border rounded-lg p-4 space-y-4">
                 <div className="flex justify-between items-start">
                   <div className="space-y-1">
-                    <h3 className="font-semibold text-lg">{registration.team_name}</h3>
-                    <p className="text-sm text-gray-600">
+                    <h3 className="font-semibold text-lg text-castle-red">{registration.team_name}</h3>
+                    <p className="text-sm text-castle-gray">
                       Captain: {registration.captain_name} | {registration.email}
                     </p>
-                    <p className="text-sm text-gray-600">
+                    <p className="text-sm text-castle-gray">
                       Phone: {registration.phone_number} | 
                       Registered: {new Date(registration.created_at).toLocaleDateString()}
                     </p>
@@ -275,7 +275,7 @@ export function AdminPanel() {
                 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div>
-                    <h4 className="font-semibold text-sm text-gray-700 mb-2">Soapbox Details</h4>
+                    <h4 className="font-semibold text-sm text-castle-gray mb-2">Soapbox Details</h4>
                     <p className="text-sm"><strong>Name:</strong> {registration.soapbox_name}</p>
                     <p className="text-sm"><strong>Dimensions:</strong> {registration.dimensions}</p>
                     {registration.age_range && (
@@ -284,7 +284,7 @@ export function AdminPanel() {
                   </div>
                   
                   <div>
-                    <h4 className="font-semibold text-sm text-gray-700 mb-2">Team Members</h4>
+                    <h4 className="font-semibold text-sm text-castle-gray mb-2">Team Members</h4>
                     <div className="space-y-1">
                       {registration.team_members?.map((member: any) => (
                         <p key={member.id} className="text-sm">
@@ -302,7 +302,7 @@ export function AdminPanel() {
                         href={registration.file_url}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="flex items-center space-x-1 text-orange-600 hover:text-orange-700"
+                        className="flex items-center space-x-1 text-castle-red hover:text-red-700"
                       >
                         <FileText className="h-4 w-4" />
                         <span className="text-sm">View File</span>
@@ -330,7 +330,7 @@ export function AdminPanel() {
             ))}
             
             {filteredRegistrations.length === 0 && (
-              <div className="text-center py-8 text-gray-500">
+              <div className="text-center py-8 text-castle-gray">
                 No registrations found matching your criteria.
               </div>
             )}

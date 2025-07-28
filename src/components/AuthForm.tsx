@@ -4,6 +4,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Checkbox } from '@/components/ui/checkbox';
 import { useAuth } from '@/hooks/useAuth';
 import { useToast } from '@/hooks/use-toast';
 import { Loader2, Trophy } from 'lucide-react';
@@ -11,11 +12,13 @@ import { Loader2, Trophy } from 'lucide-react';
 export function AuthForm() {
   const [isSignUp, setIsSignUp] = useState(false);
   const [isResetPassword, setIsResetPassword] = useState(false);
+  const [isAdminSignUp, setIsAdminSignUp] = useState(false);
   const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState({
     email: '',
     password: '',
     fullName: '',
+    adminCode: '',
   });
   
   const { signIn, signUp, resetPassword } = useAuth();
@@ -35,10 +38,27 @@ export function AuthForm() {
         });
         setIsResetPassword(false);
       } else if (isSignUp) {
-        const { error } = await signUp(formData.email, formData.password, formData.fullName);
+        // Validate admin code if admin signup is selected
+        if (isAdminSignUp) {
+          if (formData.adminCode !== 'cdadmin1!') {
+            toast({
+              title: "Invalid Admin Code",
+              description: "The admin access code you entered is incorrect.",
+              variant: "destructive",
+            });
+            return;
+          }
+        }
+        
+        const { error } = await signUp(
+          formData.email, 
+          formData.password, 
+          formData.fullName,
+          isAdminSignUp
+        );
         if (error) throw error;
         toast({
-          title: "Account created successfully",
+          title: isAdminSignUp ? "Admin account created successfully" : "Account created successfully",
           description: "Please check your email to verify your account.",
         });
       } else {
@@ -68,16 +88,20 @@ export function AuthForm() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-orange-50 to-red-50">
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-orange-50 via-red-50 to-yellow-50">
       <Card className="w-full max-w-md">
         <CardHeader className="text-center">
           <div className="flex justify-center mb-4">
-            <Trophy className="h-12 w-12 text-orange-600" />
+            <img 
+              src="/Untitled design (1).png" 
+              alt="Castle Douglas Soapbox Derby Logo" 
+              className="h-16 w-auto"
+            />
           </div>
-          <CardTitle className="text-2xl font-bold text-gray-900">
+          <CardTitle className="text-2xl font-bold text-castle-red">
             Castle Douglas Soapbox Derby
           </CardTitle>
-          <CardDescription>
+          <CardDescription className="text-castle-gray">
             {isResetPassword 
               ? "Reset your password"
               : isSignUp 
@@ -102,6 +126,36 @@ export function AuthForm() {
               />
             </div>
             
+            
+            {isSignUp && (
+              <div className="space-y-4">
+                <div className="flex items-center space-x-2">
+                  <Checkbox
+                    id="adminSignUp"
+                    checked={isAdminSignUp}
+                    onCheckedChange={(checked) => setIsAdminSignUp(checked as boolean)}
+                  />
+                  <Label htmlFor="adminSignUp" className="text-sm">
+                    Register as Admin (requires access code)
+                  </Label>
+                </div>
+                
+                {isAdminSignUp && (
+                  <div className="space-y-2">
+                    <Label htmlFor="adminCode">Admin Access Code *</Label>
+                    <Input
+                      id="adminCode"
+                      name="adminCode"
+                      type="password"
+                      value={formData.adminCode}
+                      onChange={handleInputChange}
+                      required={isAdminSignUp}
+                      placeholder="Enter admin access code"
+                    />
+                  </div>
+                )}
+              </div>
+            )}
             {isSignUp && (
               <div className="space-y-2">
                 <Label htmlFor="fullName">Full Name</Label>
@@ -134,14 +188,14 @@ export function AuthForm() {
             
             <Button 
               type="submit" 
-              className="w-full bg-orange-600 hover:bg-orange-700"
+              className="w-full bg-castle-red hover:bg-red-700 text-white"
               disabled={loading}
             >
               {loading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
               {isResetPassword 
                 ? "Send Reset Email"
                 : isSignUp 
-                  ? "Create Account"
+                  ? (isAdminSignUp ? "Create Admin Account" : "Create Account")
                   : "Sign In"
               }
             </Button>
@@ -163,7 +217,7 @@ export function AuthForm() {
                   <Button
                     variant="link"
                     onClick={() => setIsSignUp(!isSignUp)}
-                    className="text-orange-600 hover:text-orange-700 ml-1"
+                    className="text-castle-red hover:text-red-700 ml-1"
                   >
                     {isSignUp ? "Sign in" : "Sign up"}
                   </Button>
@@ -173,7 +227,7 @@ export function AuthForm() {
                   <Button
                     variant="link"
                     onClick={() => setIsResetPassword(true)}
-                    className="text-orange-600 hover:text-orange-700"
+                    className="text-castle-red hover:text-red-700"
                   >
                     Forgot your password?
                   </Button>

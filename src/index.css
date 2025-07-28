@@ -53,7 +53,7 @@ All colors MUST be HSL.
     --castle-blue: 220 85% 55%;
     --castle-green: 140 60% 50%;
     --castle-white: 0 0% 100%;
-    --castle-gray: 210 8% 50%;
+    --castle-gray: 210 10% 40%;
   }
 
   .dark {
@@ -141,4 +141,41 @@ All colors MUST be HSL.
 
 .border-castle-green {
   border-color: hsl(var(--castle-green));
+}
+
+/* Additional Castle Douglas utilities */
+.hover\:bg-castle-red:hover {
+  background-color: hsl(var(--castle-red));
+}
+
+.hover\:bg-castle-blue:hover {
+  background-color: hsl(var(--castle-blue));
+}
+
+.hover\:bg-castle-green:hover {
+  background-color: hsl(var(--castle-green));
+}
+
+.hover\:text-castle-red:hover {
+  color: hsl(var(--castle-red));
+}
+
+.hover\:text-castle-blue:hover {
+  color: hsl(var(--castle-blue));
+}
+
+.hover\:text-castle-green:hover {
+  color: hsl(var(--castle-green));
+}
+
+.focus\:ring-castle-red:focus {
+  --tw-ring-color: hsl(var(--castle-red));
+}
+
+.focus\:ring-castle-blue:focus {
+  --tw-ring-color: hsl(var(--castle-blue));
+}
+
+.focus\:ring-castle-green:focus {
+  --tw-ring-color: hsl(var(--castle-green));
 }

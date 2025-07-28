@@ -71,12 +71,14 @@ export function useAuth() {
   };
 
   const signUp = async (email: string, password: string, fullName: string) => {
+  const signUp = async (email: string, password: string, fullName: string, isAdmin: boolean = false) => {
     const { error } = await supabase.auth.signUp({
       email,
       password,
       options: {
         data: {
           full_name: fullName,
+          role: isAdmin ? 'admin' : 'user',
         },
       },
     });

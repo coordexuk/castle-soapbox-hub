@@ -529,7 +529,7 @@ export function TeamRegistrationForm({ onSuccess }: TeamRegistrationFormProps) {
           <Button
             type="submit"
             disabled={loading || uploading}
-            className="w-full bg-red-600 hover:bg-red-700"
+            className="w-full bg-castle-red hover:bg-red-700 text-white"
           >
             {loading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
             {existingRegistration ? 'Update Registration' : 'Submit Registration'}
