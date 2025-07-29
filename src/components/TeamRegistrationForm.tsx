@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useTeamRegistration } from '@/hooks/useTeamRegistration';
@@ -91,7 +92,7 @@ export function TeamRegistrationForm() {
     captain_name: user?.profile?.full_name || user?.user_metadata?.full_name || '',
     email: user?.email || '',
     phone_number: user?.profile?.phone || user?.user_metadata?.phone || '',
-    age_range: '', // Not stored in profile yet
+    age_range: '',
     soapbox_name: '',
     design_description: '',
     dimensions: '',
@@ -100,12 +101,11 @@ export function TeamRegistrationForm() {
   }));
   
   const [teamMembers, setTeamMembers] = useState<TeamMember[]>(() => {
-    // Only pre-fill if we have a user
     if (!user?.email) return [];
     
     return [{
       member_name: user.profile?.full_name || user.user_metadata?.full_name || 'Team Captain',
-      member_age: 18, // Default age, can be updated
+      member_age: 18,
       email: user.email,
       phone: user.profile?.phone || user.user_metadata?.phone || '',
       is_team_leader: true
@@ -247,14 +247,6 @@ export function TeamRegistrationForm() {
       return;
     }
     
-    const submissionData = {
-      ...formData,
-      user_id: user?.id, // Add user ID to track who submitted
-      submitted_at: new Date().toISOString(),
-      // Include profile completion status
-      profile_complete: !!(user?.profile?.phone || user?.user_metadata?.phone)
-    };
-    
     try {
       setIsLoading(true);
       
@@ -264,21 +256,7 @@ export function TeamRegistrationForm() {
           : member
       );
       
-      const formDataToSubmit = new FormData();
-      
-      Object.entries(formData).forEach(([key, value]) => {
-        if (value !== undefined && value !== null) {
-          formDataToSubmit.append(key, String(value));
-        }
-      });
-      
-      formDataToSubmit.append('team_members', JSON.stringify(updatedTeamMembers));
-      
-      if (file) {
-        formDataToSubmit.append('design_file', file);
-      }
-      
-      const result = await submitRegistration(formDataToSubmit);
+      const result = await submitRegistration(formData, updatedTeamMembers, file || undefined);
       
       if (result?.success) {
         toast.success('Team registration submitted successfully!');
@@ -347,29 +325,6 @@ export function TeamRegistrationForm() {
               required
             />
           </div>
-<<<<<<< Updated upstream
-          
-          {/* Terms & Conditions */}
-          <div className="space-y-4">
-            <div className="flex items-center space-x-2">
-              <Checkbox
-                id="terms"
-                checked={formData.terms_accepted}
-                onCheckedChange={(checked) => 
-                  setFormData(prev => ({ ...prev, terms_accepted: checked as boolean }))
-                }
-              />
-              <Label htmlFor="terms" className="text-sm">
-                I accept the terms and conditions for the Castle Douglas Soapbox Derby 2026 *
-              </Label>
-            </div>
-          </div>
-          
-          <Button
-            type="submit"
-            disabled={loading || uploading}
-            className="w-full bg-castle-red hover:bg-red-700 text-white"
-=======
         </div>
         <div className="space-y-2">
           <Label>Age Range *</Label>
@@ -377,7 +332,6 @@ export function TeamRegistrationForm() {
             value={formData.age_range}
             onValueChange={(value) => handleSelectChange(value, 'age_range')}
             required
->>>>>>> Stashed changes
           >
             <SelectTrigger>
               <SelectValue placeholder="Select age range" />
